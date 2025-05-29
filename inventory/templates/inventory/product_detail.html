@@ -1,0 +1,137 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}{{ product.name }} - Inventory Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{{ product.name }}</h2>
+    <div>
+        <a href="{% url 'product_edit' product.pk %}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Edit Product
+        </a>
+        <a href="{% url 'product_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Products
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Product Information</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+
+                    <dt class="col-sm-4">Price</dt>
+                    <dd class="col-sm-8">₹{{ product.price|floatformat:2 }}</dd>
+
+                    <dt class="col-sm-4">Current Stock</dt>
+                    <dd class="col-sm-8">
+                        {{ product.current_stock }}
+                        {% if product.is_low_stock %}
+                            <span class="badge bg-warning">Low Stock</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-4">Min Stock Level</dt>
+                    <dd class="col-sm-8">{{ product.min_stock_level }}</dd>
+
+                    <dt class="col-sm-4">Description</dt>
+                    <dd class="col-sm-8">{{ product.description|default:"No description" }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'sale_create' %}" class="btn btn-success w-100 mb-2">
+                    <i class="fas fa-shopping-cart"></i> Record Sale
+                </a>
+                <a href="{% url 'purchase_create' %}" class="btn btn-primary w-100">
+                    <i class="fas fa-truck"></i> Record Purchase
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#sales">Sales History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#purchases">Purchase History</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="sales">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Quantity</th>
+                                        <th>Price/Unit</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for sale in sales %}
+                                        <tr>
+                                            <td>{{ sale.date|date:"M d, Y H:i" }}</td>
+                                            <td>{{ sale.quantity }}</td>
+                                            <td>₹{{ sale.price_per_unit|floatformat:2 }}</td>
+                                            <td>₹{{ sale.total_price|floatformat:2 }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center">No sales recorded</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="purchases">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Quantity</th>
+                                        <th>Price/Unit</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for purchase in purchases %}
+                                        <tr>
+                                            <td>{{ purchase.date|date:"M d, Y H:i" }}</td>
+                                            <td>{{ purchase.quantity }}</td>
+                                            <td>₹{{ purchase.price_per_unit|floatformat:2 }}</td>
+                                            <td>₹{{ purchase.total_price|floatformat:2 }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center">No purchases recorded</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

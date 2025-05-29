@@ -1,0 +1,99 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Dashboard - Inventory Management System{% endblock %}
+
+{% block content %}
+<H3>INVENTORY MANAGEMENT SYSTEM</H3>
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total Products</h5>
+                <h2 class="card-text">{{ total_products }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Total Stock Value</h5>
+                <h2 class="card-text">₹{{ total_stock_value|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title">Low Stock Items</h5>
+                <h2 class="card-text">{{ low_stock_products|length }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Low Stock Alerts</h5>
+            </div>
+            <div class="card-body">
+                {% if low_stock_products %}
+                    <div class="list-group">
+                        {% for product in low_stock_products %}
+                            <a href="{% url 'product_detail' product.pk %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ product.name }}</h6>
+                                    <small>Stock: {{ product.current_stock }}</small>
+                                </div>
+                                <small>Min Level: {{ product.min_stock_level }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No low stock alerts</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Activity</h5>
+            </div>
+            <div class="card-body">
+                <h6>Recent Sales</h6>
+                <div class="list-group mb-3">
+                    {% for sale in recent_sales %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ sale.product.name }}</h6>
+                                <small>{{ sale.date|date:"M d, Y" }}</small>
+                            </div>
+                            <p class="mb-1">Quantity: {{ sale.quantity }} | Total: ₹{{ sale.total_price|floatformat:2 }}</p>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted">No recent sales</p>
+                    {% endfor %}
+                </div>
+
+                <h6>Recent Purchases</h6>
+                <div class="list-group">
+                    {% for purchase in recent_purchases %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ purchase.product.name }}</h6>
+                                <small>{{ purchase.date|date:"M d, Y" }}</small>
+                            </div>
+                            <p class="mb-1">Quantity: {{ purchase.quantity }} | Total: ₹{{ purchase.total_price|floatformat:2 }}</p>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted">No recent purchases</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
